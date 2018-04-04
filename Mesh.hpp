@@ -18,7 +18,7 @@ public:
 
 		material = Material(L"Shader.hlsl");
 		
-		CreateSphere(1.0f,6,5);
+		CreateSphere(2.0f,6,5);
 		//CreateTriangleBox(0.0f,0.0f,0.0f);
 		Apply();
 	}
@@ -252,38 +252,38 @@ public:
 	
 	void Apply()
 	{
-		//if (vertices.size() > 0)
-		//{
-		//	D3D11_BUFFER_DESC vertexBufferDesc = {};
-		//	vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
-		//	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		//	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		//	vertexBufferDesc.CPUAccessFlags = 0;
-		//	vertexBufferDesc.MiscFlags = 0;
-		//	D3D11_SUBRESOURCE_DATA vertexSubresourceData = {};
-		//	vertexSubresourceData.pSysMem = vertices.data();
-		//	//バッファの初期化
-		//	vertexBuffer.Release();
-		//	//バッファ作成
-		//	App::GetGraphicsDecvice().CreateBuffer(&vertexBufferDesc, &vertexSubresourceData,
-		//		&vertexBuffer);
-		//}
-		//if (indices.size() > 0)
-		//{
-		//	D3D11_BUFFER_DESC indexBufferDesc = {};
-		//	indexBufferDesc.ByteWidth = sizeof(Vertex) * indices.size();
-		//	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		//	indexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		//	indexBufferDesc.CPUAccessFlags = 0;
-		//	indexBufferDesc.MiscFlags = 0;
-		//	D3D11_SUBRESOURCE_DATA indexSubresourceData = {};
-		//	indexSubresourceData.pSysMem = indices.data();
-		//	//バッファの初期化
-		//	indexBuffer.Release();
-		//	//バッファ作成
-		//	App::GetGraphicsDecvice().CreateBuffer(&indexBufferDesc, &indexSubresourceData,
-		//		&indexBuffer);
-		//}
+		if (vertices.size() > 0)
+		{
+			D3D11_BUFFER_DESC vertexBufferDesc = {};
+			vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
+			vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			vertexBufferDesc.CPUAccessFlags = 0;
+			vertexBufferDesc.MiscFlags = 0;
+			D3D11_SUBRESOURCE_DATA vertexSubresourceData = {};
+			vertexSubresourceData.pSysMem = vertices.data();
+			//バッファの初期化
+			vertexBuffer.Release();
+			//バッファ作成
+			App::GetGraphicsDecvice().CreateBuffer(&vertexBufferDesc, &vertexSubresourceData,
+				&vertexBuffer);
+		}
+		if (indices.size() > 0)
+		{
+			D3D11_BUFFER_DESC indexBufferDesc = {};
+			indexBufferDesc.ByteWidth = sizeof(Vertex) * indices.size();
+			indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			indexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			indexBufferDesc.CPUAccessFlags = 0;
+			indexBufferDesc.MiscFlags = 0;
+			D3D11_SUBRESOURCE_DATA indexSubresourceData = {};
+			indexSubresourceData.pSysMem = indices.data();
+			//バッファの初期化
+			indexBuffer.Release();
+			//バッファ作成
+			App::GetGraphicsDecvice().CreateBuffer(&indexBufferDesc, &indexSubresourceData,
+				&indexBuffer);
+		}
 		if (sphere.size() > 0)
 		{
 			D3D11_BUFFER_DESC sphereBufferDesc = {};
@@ -339,7 +339,19 @@ public:
 		UINT offset = 0;
 		App::GetGraphicsContext().IASetVertexBuffers(0, 1, &vertexBuffer.p,
 			&stride, &offset);
-		App::GetGraphicsContext().Draw(vertices.size(), 0);
+		if (indexBuffer != nullptr)
+		{
+			App::GetGraphicsContext().DrawIndexed(indices.size(), 0,0);
+		}
+		else if(sphereBuffer != nullptr)
+		{
+			App::GetGraphicsContext().Draw(sphere.size(), 0);
+		}
+		else
+		{
+			App::GetGraphicsContext().Draw(vertices.size(), 0);
+		}
+		
 	}
 
 private:
