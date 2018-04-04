@@ -464,5 +464,5 @@ Float4 operator/(const Float4& t1, const float& t4)
 struct Vertex
 {
 	Float3 position;
-	Float3 color;
+	Float3 normal;
 };

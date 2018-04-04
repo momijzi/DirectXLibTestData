@@ -2,7 +2,6 @@
 
 #define OEMRESOURCE
 
-#include "math.h"
 #include <memory>
 #include <vector>
 #include <Windows.h>
@@ -15,7 +14,6 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 #define MAIN()	APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
-#define PI 3.141592
 
 #include "Utility.hpp"
 

@@ -59,6 +59,36 @@ public:
 
 		device->CreateRenderTargetView(renderTexture, nullptr, &renderTargetView);
 
+
+		ATL::CComPtr<ID3D11Texture2D> depthStencilTexture = nullptr;
+
+		D3D11_TEXTURE2D_DESC depthStencilTextureDesc = {};
+		depthStencilTextureDesc.Width = App::GetWindowSize().x;
+		depthStencilTextureDesc.Height = App::GetWindowSize().y;
+		depthStencilTextureDesc.MipLevels = 1;
+		depthStencilTextureDesc.ArraySize = 1;
+		depthStencilTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+		depthStencilTextureDesc.SampleDesc.Count = 1;
+		depthStencilTextureDesc.SampleDesc.Quality = 0;
+		depthStencilTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+		device->CreateTexture2D(
+			&depthStencilTextureDesc,
+			nullptr,
+			&depthStencilTexture
+		);
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+		depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+
+		device->CreateDepthStencilView(
+			depthStencilTexture,
+			&depthStencilViewDesc,
+			&depthStencilView
+		);
+
 		D3D11_VIEWPORT viewPort = {};
 		viewPort.TopLeftX = 0.0f;
 		viewPort.TopLeftY = 0.0f;
@@ -89,10 +119,15 @@ public:
 	{
 		swapChain->Present(1, 0);
 
-		context->OMSetRenderTargets(1, &renderTargetView.p, nullptr);
+		context->OMSetRenderTargets(1, &renderTargetView.p, depthStencilView);
 
 		static float color[4] = { 1.0f,1.0f,1.0f ,1.0f };
 		context->ClearRenderTargetView(renderTargetView, color);
+
+		context->ClearDepthStencilView(
+			depthStencilView,
+			D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+			1.0f, 0);
 	}
 
 private:
@@ -100,5 +135,5 @@ private:
 	ATL::CComPtr<IDXGISwapChain> swapChain = nullptr;
 	ATL::CComPtr<ID3D11DeviceContext> context = nullptr;
 	ATL::CComPtr<ID3D11RenderTargetView> renderTargetView = nullptr;
-
+	ATL::CComPtr<ID3D11DepthStencilView> depthStencilView = nullptr;
 };
